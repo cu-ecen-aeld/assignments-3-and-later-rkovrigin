@@ -78,19 +78,18 @@ bool do_exec(int count, ...)
 	if (pid == 0)
 	{
 		// this is a child process
-		if (execv(command[0], &command[1]) != 0)
+		if (execvp(command[0], command) != 0)
 		{
 			perror("execv");
-			exit(-1);
+			exit(1);
 		}
-		return true;
 	} 
 	else
 	{
 		// this is a parent process
 		int status;
 		wait(&status);
-		if (status == -1)
+		if (WEXITSTATUS(status) == 1)
 		{
 			perror("child failed");
 			return false;
