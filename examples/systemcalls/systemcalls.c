@@ -76,7 +76,7 @@ bool do_exec(int count, ...)
 		if ((chret = execv(command[0], command)) != 0)
 		{
 			perror("execv");
-			return -1;
+			exit(-1);
 		}
 		return true;
 	} 
@@ -136,9 +136,9 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
 	{
 		case -1: perror("fork"); return false;
 		case 0: //child
-		        if (dup2(fd, 1) < 0) { perror("dup2"); return -1; }
+		        if (dup2(fd, 1) < 0) { perror("dup2"); exit(-1); }
 				close(fd);
-				if (execv(command[0], command) < 0) {perror("error"); return -1;}
+				if (execv(command[0], command) < 0) {perror("error"); exit(-1);}
 		default:
 				close(fd);
 				break;
