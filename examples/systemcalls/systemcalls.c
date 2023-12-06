@@ -1,4 +1,9 @@
 #include "systemcalls.h"
+#include "stdlib.h"
+#include "stdio.h"
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 /**
  * @param cmd the command to execute with system()
@@ -70,12 +75,13 @@ bool do_exec(int count, ...)
 		int chret;
 		if ((chret = execv(command[0], command)) < 0)
 		{
-			perror("execv %s error\n", command[0]);
+			perror("execv");
 			return chret;
 		}
 		exit(0);
 	}
 	// this is a parent process
+	int status;
 	if (waitpid(pid, &status, 0) == -1)
 	{
 		return -1;
@@ -120,7 +126,7 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
 		perror("open file");
 		abort();
 	}
-	pid = fork();
+	int pid = fork();
 	switch (pid)
 	{
 		case -1: perror("fork"); exit(-1);
@@ -128,12 +134,13 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
 		case 0: //child
 		        if (dup2(fd, 1) < 0) { perror("dup2"); exit(-1); }
 				close(fd);
-				if (execv(command[0], command) < 0) {perror("error %s exec", command[0]); exit(-1);}
+				if (execv(command[0], command) < 0) {perror("error"); exit(-1);}
 		default:
 				close(fd);
 				break;
 	}
 	// this is a parent process
+	int status;
 	if (waitpid(pid, &status, 0) == -1)
 	{
 		return -1;
