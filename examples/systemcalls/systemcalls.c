@@ -78,7 +78,7 @@ bool do_exec(int count, ...)
 			perror("execv");
 			return false;
 		}
-		exit(0);
+		return true;
 	}
 	// this is a parent process
 	int status;
