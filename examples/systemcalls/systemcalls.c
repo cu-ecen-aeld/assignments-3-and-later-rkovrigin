@@ -73,23 +73,23 @@ bool do_exec(int count, ...)
 	{
 		// this is a child process
 		int chret;
-		if ((chret = execv(command[0], command)) < 0)
+		if ((chret = execv(command[0], command)) != 0)
 		{
 			perror("execv");
 			return -1;
 		}
 		return true;
-	}
-	// this is a parent process
-	int status;
-	if (waitpid(pid, &status, 0) == -1)
+	} 
+	else
 	{
-		return false;
-	}
-	if (status == -1)
-	{
-		perror("child failed");
-		return false;
+		// this is a parent process
+		int status;
+		wait(&status);
+		if (status == -1)
+		{
+			perror("child failed");
+			return false;
+		}
 	}
 
     va_end(args);
