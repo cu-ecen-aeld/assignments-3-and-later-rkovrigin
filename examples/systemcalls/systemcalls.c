@@ -76,7 +76,7 @@ bool do_exec(int count, ...)
 		if ((chret = execv(command[0], command)) < 0)
 		{
 			perror("execv");
-			return chret;
+			return false;
 		}
 		exit(0);
 	}
@@ -84,7 +84,7 @@ bool do_exec(int count, ...)
 	int status;
 	if (waitpid(pid, &status, 0) == -1)
 	{
-		return -1;
+		return false;
 	}
 
     va_end(args);
@@ -124,17 +124,16 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
 	if (fd < 0)
 	{
 		perror("open file");
-		abort();
+		return false;;
 	}
 	int pid = fork();
 	switch (pid)
 	{
-		case -1: perror("fork"); exit(-1);
-				 break;
+		case -1: perror("fork"); return false;
 		case 0: //child
-		        if (dup2(fd, 1) < 0) { perror("dup2"); exit(-1); }
+		        if (dup2(fd, 1) < 0) { perror("dup2"); return false; }
 				close(fd);
-				if (execv(command[0], command) < 0) {perror("error"); exit(-1);}
+				if (execv(command[0], command) < 0) {perror("error"); return false;}
 		default:
 				close(fd);
 				break;
@@ -143,7 +142,7 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
 	int status;
 	if (waitpid(pid, &status, 0) == -1)
 	{
-		return -1;
+		return false;
 	}
 
     va_end(args);
