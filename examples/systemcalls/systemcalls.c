@@ -65,6 +65,11 @@ bool do_exec(int count, ...)
  *   as second argument to the execv() command.
  *
 */
+	if (command[0][0] != '/')
+	{
+		perror("not an absolute path");
+		return false;
+	}
 	int pid = fork();
 	if (pid == -1)
 		return false;
@@ -72,7 +77,7 @@ bool do_exec(int count, ...)
 	if (pid == 0)
 	{
 		// this is a child process
-		if (execv(command[0], &command[1]) != 0)
+		if (execv(command[0], command) != 0)
 		{
 			perror("execv");
 			exit(-1);
@@ -141,7 +146,7 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
 					exit(-1);
 				}
 				close(fd);
-				if (execv(command[0], &command[1]) != 0)
+				if (execv(command[0], command) != 0)
 				{
 					perror("error"); 
 					exit(-1);
