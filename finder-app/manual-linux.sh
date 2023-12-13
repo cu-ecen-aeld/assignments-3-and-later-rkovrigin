@@ -113,13 +113,16 @@ make CROSS_COMPILE=${CROSS_COMPILE} -C ${FINDER_APP_DIR}
 # on the target rootfs
 
 cp ${FINDER_APP_DIR}/autorun-qemu.sh ${OUTDIR}/rootfs/home
-cp -r ${FINDER_APP_DIR}/conf ${OUTDIR}/rootfs/home
 cp ${FINDER_APP_DIR}/dependencies.sh ${OUTDIR}/rootfs/home
 cp ${FINDER_APP_DIR}/finder-test.sh ${OUTDIR}/rootfs/home
 cp ${FINDER_APP_DIR}/finder.sh ${OUTDIR}/rootfs/home
 cp ${FINDER_APP_DIR}/writer ${OUTDIR}/rootfs/home
 cp ${FINDER_APP_DIR}/writer.c ${OUTDIR}/rootfs/home
 cp ${FINDER_APP_DIR}/writer.sh ${OUTDIR}/rootfs/home
+cp ${FINDER_APP_DIR}/Makefile ${OUTDIR}/rootfs/home
+mkdir ${OUTDIR}/rootfs/home/conf
+cp ${FINDER_APP_DIR}/conf/username.txt ${OUTDIR}/rootfs/home/conf
+cp ${FINDER_APP_DIR}/conf/assignment.txt ${OUTDIR}/rootfs/home/conf
 
 
 # TODO: Chown the root directory
