@@ -26,18 +26,22 @@ mkdir -p ${OUTDIR}
 cur=$(pwd)
 
 cd "$OUTDIR"
+flag=0
 if [ ! -d "${OUTDIR}/linux-stable" ]; then
     #Clone only if the repository does not exist.
 	echo "CLONING GIT LINUX STABLE VERSION ${KERNEL_VERSION} IN ${OUTDIR}"
 	git clone ${KERNEL_REPO} --depth 1 --single-branch --branch ${KERNEL_VERSION}
+	flag=1
 fi
 
 if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
     cd linux-stable
     echo "Checking out version ${KERNEL_VERSION}"
     git checkout ${KERNEL_VERSION}
-	#echo $(pwd)
-	git apply $cur/my.patch
+	if [ flag -ex 1 ];
+	then
+		git apply $cur/my.patch
+	fi
 
     # TODO: Add your kernel build steps here
     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} mrproper
@@ -45,7 +49,6 @@ if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
     make -j4 ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} all
     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} modules
     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} dtbs
-	echo "---> DONE <---"
 fi
 
 echo "Adding the Image in outdir"
